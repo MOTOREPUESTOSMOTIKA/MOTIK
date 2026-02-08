@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Control Motika| Pro v1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <h2>MOTIKA</h2>
+        <ul>
+            <li><button onclick="showSection('dashboard')">Panel de Control</button></li>
+            <li><button onclick="showSection('inventario')">Inventario</button></li>
+            <li><button onclick="showSection('finanzas')">Finanzas</button></li>
+            <li><button onclick="showSection('gastos-operativos')">Gastos Diarios</button></li>
+            <li><button onclick="showSection('encargos')">Pedidos por Encargo</button></li>
+            <li><button onclick="window.open('reporte.html', '_blank')">Ver Reporte Detallado ↗</button></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <section id="dashboard" class="active">
+            <h1>Resumen General</h1>
+            <div class="cards-container">
+                <div class="card"><h3>Ganancias</h3><p id="total-ganancias">$0.00</p></div>
+                <div class="card"><h3>Gastos</h3><p id="total-gastos">$0.00</p></div>
+                <div class="card"><h3>Balance</h3><p id="balance-final">$0.00</p></div>
+            </div>
+        </section>
+
+        <section id="inventario">
+            <h1>Gestión de Inventario</h1>
+            <input type="text" id="busqueda-inv" placeholder="🔍 Buscar producto..." onkeyup="actualizarInventario()">
+            <div class="cards-container">
+                <div class="card"><h3>Inversión</h3><p id="total-costo-inv">$0.00</p></div>
+                <div class="card"><h3>Venta</h3><p id="total-venta-inv">$0.00</p></div>
+                <div class="card"><h3>Ganancia Est.</h3><p id="total-ganancia-inv">$0.00</p></div>
+            </div>
+            <form id="form-producto">
+                <input type="text" id="prod-nombre" placeholder="Nombre" required>
+                <input type="number" id="prod-cantidad" placeholder="Cant." required>
+                <input type="number" id="prod-costo" placeholder="Costo" required>
+                <input type="number" id="prod-precio" placeholder="Precio" required>
+                <button type="submit">Agregar</button>
+            </form>
+            <table style="width:100%; background:white; margin-top:20px;">
+                <thead><tr><th>Producto</th><th>Stock</th><th>Costo</th><th>Venta</th><th>Acciones</th></tr></thead>
+                <tbody id="tabla-inventario"></tbody>
+            </table>
+        </section>
+
+        <section id="finanzas">
+            <h1>Registro de Ventas</h1>
+            <button onclick="cerrarCaja()" class="btn-cierre">🔒 Cerrar Caja</button>
+            <input type="date" id="filtro-fecha-finanzas" onchange="actualizarFinanzas()">
+            <form id="form-transaccion">
+                <select id="trans-tipo" onchange="toggleProductoSelector()">
+                    <option value="venta">Venta</option>
+                    <option value="ingreso">Otro Ingreso</option>
+                    <option value="gasto">Gasto General</option>
+                </select>
+                <select id="select-producto"></select>
+                <input type="number" id="trans-cantidad" placeholder="Cant." value="1">
+                <input type="text" id="trans-desc" placeholder="Descripción">
+                <input type="number" id="trans-monto" placeholder="Monto $">
+                <button type="submit">Registrar</button>
+            </form>
+            <div class="card card-resaltada"><h3>Total del día</h3><p id="total-dia-filtro">$0.00</p></div>
+            <ul id="lista-transacciones"></ul>
+        </section>
+
+        <section id="encargos">
+            <h1>Pedidos por Encargo</h1>
+            <button onclick="cerrarPedidos()" style="background:#4caf50; color:white; padding:10px; border:none; border-radius:5px; margin-bottom:15px;">📦 Finalizar Semana</button>
+            <form id="form-encargo" style="display:flex; flex-direction:column;">
+                <input type="text" id="enc-cliente" placeholder="Nombre del Cliente" required style="width: 100%;">
+                <div id="contenedor-filas-productos">
+                    <div class="fila-producto">
+                        <input type="text" placeholder="Producto" class="p-nombre" required>
+                        <input type="number" placeholder="Cant." class="p-cant" style="max-width: 80px;" required>
+                        <button type="button" onclick="agregarFila()">+</button>
+                    </div>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <input type="number" id="enc-abono" placeholder="Abono $" value="0">
+                    <label><input type="checkbox" id="enc-pagado"> ¿Pago completo?</label>
+                </div>
+                <button type="submit" style="background:var(--success); margin-top:10px;">Guardar Pedido</button>
+            </form>
+            <div id="lista-pedidos-clientes" class="cards-container"></div>
+        </section>
+
+        <section id="gastos-operativos">
+            <h1>Gastos de Logística</h1>
+            <input type="date" id="filtro-fecha-gasto" onchange="calcularGastosOperativos()">
+            <div class="card-resaltada">
+                <h3>Gastos Seleccionados: <span id="total-gasto-dia-surtido">$0.00</span></h3>
+                <p>Surtido: <span id="det-surtido">$0.00</span> | Transp: <span id="det-transp">$0.00</span> | Otros: <span id="det-otros">$0.00</span></p>
+            </div>
+            <form id="form-gastos-diarios">
+                <input type="date" id="gasto-fecha" required>
+                <select id="gasto-categoria">
+                    <option value="Surtido">Surtido</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Otros">Otros</option>
+                </select>
+                <input type="text" id="gasto-desc" placeholder="Detalle">
+                <input type="number" id="gasto-monto" placeholder="Monto $" required>
+                <button type="submit">Registrar Gasto</button>
+            </form>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
