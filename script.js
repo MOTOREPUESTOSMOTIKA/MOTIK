@@ -26,13 +26,15 @@ const fProd = document.getElementById('form-producto');
 if(fProd) {
     fProd.addEventListener('submit', (e) => {
         e.preventDefault();
-        productos.push({
-            id: Date.now(),
-            nombre: document.getElementById('prod-nombre').value,
-            cantidad: parseInt(document.getElementById('prod-cantidad').value),
-            costo: parseFloat(document.getElementById('prod-costo').value),
-            precio: parseFloat(document.getElementById('prod-precio').value)
-        });
+productos.push({
+    id: Date.now(),
+    nombre: document.getElementById('prod-nombre').value,
+    codigo: document.getElementById('prod-codigo').value || '', // NUEVO CAMPO
+    cantidad: parseInt(document.getElementById('prod-cantidad').value),
+    costo: parseFloat(document.getElementById('prod-costo').value),
+    precio: parseFloat(document.getElementById('prod-precio').value)
+});
+
         actualizarTodo();
         fProd.reset();
     });
