@@ -11,7 +11,8 @@ window.showSection = function(id) {
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
-     Cierra el menú automáticamente si estamos en celular
+    
+    //Cierra el menú automáticamente si estamos en celular---*/
     const sidebar = document.getElementById('sidebar');
     if (sidebar) sidebar.classList.remove('active');
 }
