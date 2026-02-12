@@ -62,6 +62,16 @@
             <h1>Ventas y Caja</h1>
             <button onclick="cerrarCaja()" class="btn-main" style="background: red; color:white; margin-bottom:15px;">🔒 Cerrar Caja y Guardar Reporte</button>
             
+            <div id="reader-container" style="display:none; margin-bottom: 20px;">
+    <div id="reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
+    <button onclick="stopScanner()" class="btn-main" style="background:red;">Cerrar Cámara</button>
+</div>
+
+<button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px;">
+    📷 Escanear Código
+</button>
+
+
             <form id="form-transaccion">
                 <select id="trans-tipo" onchange="toggleProductoSelector()">
                     <option value="venta">Venta de Stock</option>
