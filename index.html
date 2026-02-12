@@ -41,6 +41,7 @@
         <section id="inventario">
             <h1>Inventario Stock</h1>
             <form id="form-producto">
+                <input type="text" id="prod-codigo" placeholder="Código de Barras (Opcional)">
                 <input type="text" id="prod-nombre" placeholder="Producto" required>
                 <input type="number" id="prod-cantidad" placeholder="Cant." required>
                 <input type="number" id="prod-costo" placeholder="Costo Unit." step="0.01" required>
@@ -67,9 +68,14 @@
     <button onclick="stopScanner()" class="btn-main" style="background:red;">Cerrar Cámara</button>
 </div>
 
-<button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px;">
+<div id="reader-container" style="display:none; margin-bottom: 20px; text-align:center;">
+    <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
+    <button onclick="stopScanner()" class="btn-main" style="background:red; margin-top:10px;">Cerrar Cámara</button>
+</div>
+<button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px; width: 100%;">
     📷 Escanear Código
 </button>
+
 
 
             <form id="form-transaccion">
