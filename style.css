@@ -74,3 +74,47 @@ th { background: var(--light); color: var(--primary); }
     .content { margin-left: 0; width: 100%; }
     body { flex-direction: column; }
 }
+/* Estilos para el botón de hamburguesa */
+.menu-toggle {
+    display: none; /* Se oculta en computadoras */
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    background: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 1100;
+    cursor: pointer;
+}
+
+/* Reglas exclusivas para Celulares (Pantallas menores a 768px) */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block; /* Aparece el botón en celular */
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -100%; /* Esconde el menú a la izquierda */
+        top: 0;
+        width: 250px;
+        height: 100%;
+        transition: 0.3s;
+        z-index: 1000;
+    }
+
+    /* Clase que activaremos con JS para mostrar el menú */
+    .sidebar.active {
+        left: 0; /* Desplaza el menú hacia adentro */
+    }
+
+    .content {
+        margin-left: 0 !important; /* Quita el margen lateral en celular */
+        padding-top: 60px; /* Espacio para que el botón no tape el título */
+    }
+}
+
+
