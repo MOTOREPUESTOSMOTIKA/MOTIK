@@ -26,15 +26,14 @@ const fProd = document.getElementById('form-producto');
 if(fProd) {
     fProd.addEventListener('submit', (e) => {
         e.preventDefault();
-productos.push({
-    id: Date.now(),
-    nombre: document.getElementById('prod-nombre').value,
-    codigo: document.getElementById('prod-codigo').value || '', // NUEVO CAMPO
-    cantidad: parseInt(document.getElementById('prod-cantidad').value),
-    costo: parseFloat(document.getElementById('prod-costo').value),
-    precio: parseFloat(document.getElementById('prod-precio').value)
-});
-
+        productos.push({
+            id: Date.now(),
+            nombre: document.getElementById('prod-nombre').value,
+            codigo: document.getElementById('prod-codigo').value || '', 
+            cantidad: parseInt(document.getElementById('prod-cantidad').value),
+            costo: parseFloat(document.getElementById('prod-costo').value),
+            precio: parseFloat(document.getElementById('prod-precio').value)
+        });
         actualizarTodo();
         fProd.reset();
     });
@@ -355,59 +354,14 @@ window.generarListaCompras = function() {
     contenedor.style.display = 'block';
 }
 
-window.onload = () => {
-    actualizarTodo();
-    window.toggleProductoSelector();
-};
-let html5QrCode;
-
-window.startScanner = function() {
-    document.getElementById('reader-container').style.display = 'block';
-    html5QrCode = new Html5Qrcode("reader");
-    
-    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
-
-    html5QrCode.start(
-        { facingMode: "environment" }, // Usa la cámara trasera
-        config,
-        (decodedText) => {
-            // Cuando detecta un código:
-            handleScanSuccess(decodedText);
-        }
-    ).catch(err => alert("Error al abrir cámara: " + err));
-}
-
-function handleScanSuccess(codigo) {
-    // 1. Detener cámara
-    stopScanner();
-    
-    // 2. Buscar producto por nombre o por un campo "codigo" (si lo tienes)
-    // Por ahora buscará si el nombre coincide exactamente con el código escaneado
-    const productoEncontrado = productos.find(p => p.nombre === codigo || p.id.toString() === codigo);
-
-    if (productoEncontrado) {
-        document.getElementById('input-buscar-prod').value = productoEncontrado.nombre;
-        document.getElementById('select-producto-id').value = productoEncontrado.id;
-        alert("Producto detectado: " + productoEncontrado.nombre);
-    } else {
-        alert("Código leido: " + codigo + ". Pero no coincide con ningún producto en inventario.");
-    }
-}
-
-window.stopScanner = function() {
-    if (html5QrCode) {
-        html5QrCode.stop().then(() => {
-            document.getElementById('reader-container').style.display = 'none';
-        });
-    }
-}
 /* --- ESCÁNER DE CÓDIGOS --- */
 let html5QrCode;
 
 window.startScanner = function() {
-    document.getElementById('reader-container').style.display = 'block';
-    html5QrCode = new Html5Qrcode("reader");
+    const container = document.getElementById('reader-container');
+    if (container) container.style.display = 'block';
     
+    html5QrCode = new Html5Qrcode("reader");
     const config = { fps: 10, qrbox: { width: 250, height: 150 } };
 
     html5QrCode.start(
@@ -416,30 +370,42 @@ window.startScanner = function() {
         (decodedText) => {
             handleScanSuccess(decodedText);
         }
-    ).catch(err => alert("Error al abrir cámara: " + err));
+    ).catch(err => {
+        console.error(err);
+        alert("Error al abrir cámara: Asegúrate de dar permisos.");
+    });
 }
 
 function handleScanSuccess(codigoEscaneado) {
     stopScanner();
     
-    // Busca si el código escaneado coincide con el campo 'codigo' o el ID
-    const productoEncontrado = productos.find(p => p.codigo === codigoEscaneado || p.id.toString() === codigoEscaneado);
+    // Busca el producto por el campo 'codigo' o por el 'ID'
+    const p = productos.find(x => x.codigo === codigoEscaneado || x.id.toString() === codigoEscaneado);
 
-    if (productoEncontrado) {
-        document.getElementById('input-buscar-prod').value = productoEncontrado.nombre;
-        document.getElementById('select-producto-id').value = productoEncontrado.id;
-        // Opcional: enfocar la cantidad automáticamente
+    if (p) {
+        if (p.cantidad <= 0) return alert("Producto sin stock.");
+        
+        // Llena los campos de venta automáticamente
+        document.getElementById('input-buscar-prod').value = p.nombre;
+        document.getElementById('select-producto-id').value = p.id;
+        
+        // Efecto visual: enfoca la cantidad para que el usuario solo tenga que darle a "Registrar"
         document.getElementById('trans-cantidad').focus();
     } else {
-        alert("Código: " + codigoEscaneado + " no encontrado.");
+        alert("El código [" + codigoEscaneado + "] no está registrado en el inventario.");
     }
 }
 
 window.stopScanner = function() {
     if (html5QrCode) {
         html5QrCode.stop().then(() => {
-            document.getElementById('reader-container').style.display = 'none';
-        });
+            const container = document.getElementById('reader-container');
+            if (container) container.style.display = 'none';
+        }).catch(err => console.error("Error al detener escáner", err));
     }
 }
 
+window.onload = () => {
+    actualizarTodo();
+    window.toggleProductoSelector();
+};
