@@ -357,3 +357,45 @@ window.onload = () => {
     actualizarTodo();
     window.toggleProductoSelector();
 };
+let html5QrCode;
+
+window.startScanner = function() {
+    document.getElementById('reader-container').style.display = 'block';
+    html5QrCode = new Html5Qrcode("reader");
+    
+    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+
+    html5QrCode.start(
+        { facingMode: "environment" }, // Usa la cámara trasera
+        config,
+        (decodedText) => {
+            // Cuando detecta un código:
+            handleScanSuccess(decodedText);
+        }
+    ).catch(err => alert("Error al abrir cámara: " + err));
+}
+
+function handleScanSuccess(codigo) {
+    // 1. Detener cámara
+    stopScanner();
+    
+    // 2. Buscar producto por nombre o por un campo "codigo" (si lo tienes)
+    // Por ahora buscará si el nombre coincide exactamente con el código escaneado
+    const productoEncontrado = productos.find(p => p.nombre === codigo || p.id.toString() === codigo);
+
+    if (productoEncontrado) {
+        document.getElementById('input-buscar-prod').value = productoEncontrado.nombre;
+        document.getElementById('select-producto-id').value = productoEncontrado.id;
+        alert("Producto detectado: " + productoEncontrado.nombre);
+    } else {
+        alert("Código leido: " + codigo + ". Pero no coincide con ningún producto en inventario.");
+    }
+}
+
+window.stopScanner = function() {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            document.getElementById('reader-container').style.display = 'none';
+        });
+    }
+}
