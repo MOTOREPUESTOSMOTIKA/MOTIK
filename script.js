@@ -466,3 +466,12 @@ window.generarListaCompras = function() {
     contenedor.style.display = 'block';
     window.scrollTo({ top: contenedor.offsetTop - 20, behavior: 'smooth' });
 }
+/* --- CONTROL DEL MENÚ CELULAR --- */
+window.toggleMenu = function() {
+    const sidebar = document.getElementById('sidebar');
+    // Si la pantalla es ancha (PC), no hace nada. 
+    // Si es celular, quita o pone la clase 'active'
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('active');
+    }
+}
