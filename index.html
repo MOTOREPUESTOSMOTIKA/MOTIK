@@ -6,11 +6,10 @@
     <title>Control Motika | Sistema Profesional</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/html5-qrcode"></script>
-
 </head>
 <body>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <nav class="sidebar" id="sidebar">
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <nav class="sidebar" id="sidebar">
         <h2>MOTIKA</h2>
         <ul>
             <li><button onclick="showSection('dashboard'); toggleMenu()">🏠 Panel Control</button></li>
@@ -22,7 +21,6 @@
             <li><button onclick="showSection('reporte-general'); toggleMenu()">📊 Reporte General</button></li>
         </ul>
     </nav>
-
 
     <main class="content">
         <section id="dashboard" class="active">
@@ -63,20 +61,14 @@
             <h1>Ventas y Caja</h1>
             <button onclick="cerrarCaja()" class="btn-main" style="background: red; color:white; margin-bottom:15px;">🔒 Cerrar Caja y Guardar Reporte</button>
             
-            <div id="reader-container" style="display:none; margin-bottom: 20px;">
-    <div id="reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
-    <button onclick="stopScanner()" class="btn-main" style="background:red;">Cerrar Cámara</button>
-</div>
+            <div id="reader-container" style="display:none; margin-bottom: 20px; text-align:center; border: 2px dashed #4A90E2; padding: 10px; border-radius: 8px;">
+                <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
+                <button onclick="stopScanner()" class="btn-main" style="background:red; margin-top:10px;">Cerrar Cámara</button>
+            </div>
 
-<div id="reader-container" style="display:none; margin-bottom: 20px; text-align:center;">
-    <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
-    <button onclick="stopScanner()" class="btn-main" style="background:red; margin-top:10px;">Cerrar Cámara</button>
-</div>
-<button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px; width: 100%;">
-    📷 Escanear Código
-</button>
-
-
+            <button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px; width: 100%;">
+                📷 Escanear Código
+            </button>
 
             <form id="form-transaccion">
                 <select id="trans-tipo" onchange="toggleProductoSelector()">
@@ -128,15 +120,12 @@
 
         <section id="pedidos">
             <h1>Gestión de Pedidos</h1>
-            <button onclick="generarListaCompras()" class="btn-main" style="background: #007bff; color:white; margin-bottom:15px;">
-    📋 Generar Lista de Compras (Consolidada)
-</button>
-
-<div id="seccion-lista-compras" style="display:none; background: #fffbe6; padding: 15px; border-radius: 8px; border: 1px dashed #e6db74; margin-bottom: 20px;">
-    <h3>🛒 Productos por Comprar</h3>
-    <ul id="lista-compras-items" style="list-style: none; padding: 0;"></ul>
-    <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; cursor:pointer;">Cerrar Lista</button>
-</div>
+            <button onclick="generarListaCompras()" class="btn-main" style="background: #007bff; color:white; margin-bottom:15px;">📋 Generar Lista de Compras</button>
+            <div id="seccion-lista-compras" style="display:none; background: #fffbe6; padding: 15px; border-radius: 8px; border: 1px dashed #e6db74; margin-bottom: 20px;">
+                <h3>🛒 Productos por Comprar</h3>
+                <ul id="lista-compras-items" style="list-style: none; padding: 0;"></ul>
+                <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; cursor:pointer;">Cerrar Lista</button>
+            </div>
             <form id="form-encargo">
                 <input type="text" id="enc-cliente" placeholder="Nombre Cliente" required>
                 <div id="contenedor-filas-productos" style="width: 100%;">
