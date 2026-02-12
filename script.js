@@ -288,11 +288,6 @@ function renderDashboard() {
     let ing = 0, gas = 0;
     transacciones.forEach(t => t.tipo === 'ingreso' ? ing += t.monto : gas += t.monto);
     
-    // Elementos existentes
-    const eGan = document.getElementById('total-ganancias');
-    const eGas = document.getElementById('total-gastos');
-    const eBal = document.getElementById('balance-final');
-    
     // Nuevos elementos para Dashboard completo
     const eInv = document.getElementById('dash-valor-inv');
     const ePat = document.getElementById('dash-patrimonio');
