@@ -401,3 +401,45 @@ window.stopScanner = function() {
         });
     }
 }
+/* --- ESCÁNER DE CÓDIGOS --- */
+let html5QrCode;
+
+window.startScanner = function() {
+    document.getElementById('reader-container').style.display = 'block';
+    html5QrCode = new Html5Qrcode("reader");
+    
+    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+
+    html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+            handleScanSuccess(decodedText);
+        }
+    ).catch(err => alert("Error al abrir cámara: " + err));
+}
+
+function handleScanSuccess(codigoEscaneado) {
+    stopScanner();
+    
+    // Busca si el código escaneado coincide con el campo 'codigo' o el ID
+    const productoEncontrado = productos.find(p => p.codigo === codigoEscaneado || p.id.toString() === codigoEscaneado);
+
+    if (productoEncontrado) {
+        document.getElementById('input-buscar-prod').value = productoEncontrado.nombre;
+        document.getElementById('select-producto-id').value = productoEncontrado.id;
+        // Opcional: enfocar la cantidad automáticamente
+        document.getElementById('trans-cantidad').focus();
+    } else {
+        alert("Código: " + codigoEscaneado + " no encontrado.");
+    }
+}
+
+window.stopScanner = function() {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            document.getElementById('reader-container').style.display = 'none';
+        });
+    }
+}
+
