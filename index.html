@@ -18,22 +18,55 @@
             <li><button onclick="showSection('gastos-operativos'); toggleMenu()">⛽ Gastos Diarios</button></li>
             <li><button onclick="showSection('pedidos'); toggleMenu()">📝 Pedidos</button></li>
             <li><button onclick="showSection('deudas'); toggleMenu()">📉 Deudas</button></li>
-            <li><button onclick="showSection('reporte-general'); toggleMenu()">📊 Reporte General</button></li>
         </ul>
     </nav>
 
     <main class="content">
-        <!-- Panel de Control (Dashboard) -->
+        <!-- Panel de Control (Dashboard Dividido en Dos) -->
         <section id="dashboard" class="active">
-            <h1>Panel de Control</h1>
-            <div class="cards-container">
-                <div class="card card-ingreso"><h3>Ingresos Totales</h3><p id="total-ganancias">$0</p></div>
-                <div class="card card-gasto"><h3>Gastos Totales</h3><p id="total-gastos">$0</p></div>
-                <div class="card card-resaltada"><h3>Efectivo y Bancos (Caja)</h3><p id="balance-final">$0</p></div>
+            <h1>Panel de Control Profesional</h1>
+            
+            <h3 style="margin-top: 10px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 5px;">📊 1. Totales Históricos (Desde el Día 1)</h3>
+            <div class="cards-container" style="margin-top: 15px;">
+                <div class="card card-ingreso">
+                    <h3>Ventas Totales (Histórico)</h3>
+                    <p id="dash-hist-ventas">$0</p>
+                </div>
+                <div class="card card-gasto">
+                    <h3>Total Comprado (Surtido Histórico)</h3>
+                    <p id="dash-hist-comprado">$0</p>
+                </div>
+                <div class="card card-gasto">
+                    <h3>Gastos Operativos (Histórico)</h3>
+                    <p id="dash-hist-gastos">$0</p>
+                </div>
             </div>
+
+            <h3 style="margin-top: 25px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 5px;">💵 2. Liquidez y Patrimonio Actual</h3>
+            <div class="cards-container" style="margin-top: 15px;">
+                <div class="card card-resaltada">
+                    <h3>Efectivo en Caja (Físico)</h3>
+                    <p id="dash-efectivo-caja">$0</p>
+                </div>
+                <div class="card card-resaltada">
+                    <h3>Saldo en Bancos (Transferencias)</h3>
+                    <p id="dash-saldo-bancos">$0</p>
+                </div>
+                <div class="card card-resaltada" style="border-left: 5px solid #27ae60;">
+                    <h3>Dinero Total Líquido</h3>
+                    <p id="dash-dinero-total">$0</p>
+                </div>
+            </div>
+
             <div class="cards-container">
-                <div class="card"><h3>Costo Inventario</h3><p id="dash-valor-inv">$0</p></div>
-                <div class="card card-resaltada"><h3>Patrimonio Neto</h3><p id="dash-patrimonio">$0</p></div>
+                <div class="card">
+                    <h3>Costo Inventario (Activo Físico)</h3>
+                    <p id="dash-valor-inv">$0</p>
+                </div>
+                <div class="card card-resaltada" style="border-left: 5px solid #8e44ad;">
+                    <h3>Patrimonio Neto Real</h3>
+                    <p id="dash-patrimonio">$0</p>
+                </div>
             </div>
         </section>
 
@@ -68,7 +101,7 @@
         <!-- Ventas y Caja -->
         <section id="finanzas">
             <h1>Ventas y Caja</h1>
-            <button onclick="cerrarCaja()" class="btn-main" id="btn-cerrar-caja" style="background: red; color:white; margin-bottom:15px;">🔒 Cerrar Caja y Guardar Reporte</button>
+            <button onclick="cerrarCaja()" class="btn-main" id="btn-cerrar-caja" style="background: red; color:white; margin-bottom:15px;">🔒 Cerrar Caja Diario</button>
             
             <div id="reader-container" style="display:none; margin-bottom: 20px; text-align:center; border: 2px dashed #4A90E2; padding: 10px; border-radius: 8px;">
                 <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
@@ -86,7 +119,6 @@
                     <option value="gasto">Gasto General</option>
                 </select>
 
-                <!-- Selector de Método de Pago -->
                 <select id="trans-metodo-pago">
                     <option value="efectivo">Efectivo (Caja)</option>
                     <option value="transferencia">Transferencia (Banco)</option>
@@ -134,7 +166,7 @@
             </div>
         </section>
 
-        <!-- Gestión de Pedidos -->
+        <!-- Gestión de Pedidos (Sin Total Obligatorio y con Entrega Parcial) -->
         <section id="pedidos">
             <h1>Gestión de Pedidos</h1>
             <button onclick="generarListaCompras()" class="btn-main" id="btn-generar-compras" style="margin-bottom:15px;">📋 Generar Lista de Compras</button>
@@ -153,7 +185,6 @@
                     </div>
                 </div>
                 <button type="button" onclick="agregarFila()" class="btn-main" id="btn-add-fila" style="background: gray; margin: 10px 0;">➕ Añadir Fila</button>
-                <input type="number" id="enc-total" placeholder="Total Pedido $" required>
                 <input type="number" id="enc-abono" placeholder="Abono Inicial $" value="0">
                 <button type="submit" class="btn-main" id="btn-guardar-pedido" style="background: green; color:white;">Guardar Pedido</button>
             </form>
@@ -177,12 +208,6 @@
                     <tbody id="tabla-deudores"></tbody>
                 </table>
             </div>
-        </section>
-
-        <!-- Historial de Cierres de Caja -->
-        <section id="reporte-general">
-            <h1>Historial de Cierres de Caja</h1>
-            <div id="historial-reportes"></div>
         </section>
     </main>
 
