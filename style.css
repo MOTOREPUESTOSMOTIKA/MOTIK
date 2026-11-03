@@ -38,6 +38,13 @@ form { background: white; padding: 20px; border-radius: 10px; display: flex; fle
 input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 120px; }
 .fila-producto { display: flex; gap: 10px; width: 100%; margin-bottom: 5px; }
 
+/* Estilo para el nuevo selector de método de pago */
+#trans-metodo-pago {
+    flex: 1;
+    min-width: 150px;
+    background-color: #fff;
+}
+
 /* Botones */
 .btn-main { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
 .btn-danger { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
@@ -69,11 +76,6 @@ th { background: var(--light); color: var(--primary); }
 /* Footer Inventario */
 .floating-inventory { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 99; }
 
-@media (max-width: 768px) {
-    .sidebar { width: 100%; position: relative; height: auto; }
-    .content { margin-left: 0; width: 100%; }
-    body { flex-direction: column; }
-}
 /* Estilos para el botón de hamburguesa */
 .menu-toggle {
     display: none; /* Se oculta en computadoras */
@@ -114,6 +116,10 @@ th { background: var(--light); color: var(--primary); }
     .content {
         margin-left: 0 !important; /* Quita el margen lateral en celular */
         padding-top: 60px; /* Espacio para que el botón no tape el título */
+    }
+
+    body { 
+        flex-direction: column; 
     }
 }
 
