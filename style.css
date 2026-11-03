@@ -38,7 +38,7 @@ form { background: white; padding: 20px; border-radius: 10px; display: flex; fle
 input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; min-width: 120px; }
 .fila-producto { display: flex; gap: 10px; width: 100%; margin-bottom: 5px; }
 
-/* Estilo para el nuevo selector de método de pago */
+/* Estilo para el selector de método de pago en Finanzas */
 #trans-metodo-pago {
     flex: 1;
     min-width: 150px;
@@ -122,5 +122,4 @@ th { background: var(--light); color: var(--primary); }
         flex-direction: column; 
     }
 }
-
 
