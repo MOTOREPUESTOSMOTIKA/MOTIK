@@ -59,14 +59,14 @@
 
         <section id="finanzas">
             <h1>Ventas y Caja</h1>
-            <button onclick="cerrarCaja()" class="btn-main" style="background: red; color:white; margin-bottom:15px;">🔒 Cerrar Caja y Guardar Reporte</button>
+            <button onclick="cerrarCaja()" class="btn-main" id="btn-cerrar-caja">🔒 Cerrar Caja y Guardar Reporte</button>
             
-            <div id="reader-container" style="display:none; margin-bottom: 20px; text-align:center; border: 2px dashed #4A90E2; padding: 10px; border-radius: 8px;">
-                <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
-                <button onclick="stopScanner()" class="btn-main" style="background:red; margin-top:10px;">Cerrar Cámara</button>
+            <div id="reader-container" style="display:none;">
+                <div id="reader"></div>
+                <button onclick="stopScanner()" class="btn-main" id="btn-cerrar-camara">Cerrar Cámara</button>
             </div>
 
-            <button type="button" onclick="startScanner()" class="btn-main" style="background: #4A90E2; margin-bottom: 10px; width: 100%;">
+            <button type="button" onclick="startScanner()" class="btn-main" id="btn-escanear">
                 📷 Escanear Código
             </button>
 
@@ -77,15 +77,21 @@
                     <option value="gasto">Gasto General</option>
                 </select>
 
-                <div id="contenedor-busqueda-prod" style="position: relative; flex: 2; display: block;">
+                <!-- NUEVO: Selector de Método de Pago -->
+                <select id="trans-metodo-pago">
+                    <option value="efectivo">Efectivo (Caja)</option>
+                    <option value="transferencia">Transferencia (Banco)</option>
+                </select>
+
+                <div id="contenedor-busqueda-prod">
                     <input type="text" id="input-buscar-prod" placeholder="Escribe nombre del producto..." autocomplete="off">
-                    <div id="lista-sugerencias" class="sugerencias-dropdown" style="background:white; border:1px solid #ccc; position:absolute; width:100%; z-index:100;"></div>
+                    <div id="lista-sugerencias" class="sugerencias-dropdown"></div>
                     <input type="hidden" id="select-producto-id">
                 </div>
 
-                <input type="number" id="trans-cantidad" placeholder="Cant." value="1" style="display:block;">
-                <input type="text" id="trans-desc" placeholder="Descripción" style="display:none;">
-                <input type="number" id="trans-monto" placeholder="Monto $" style="display:none;">
+                <input type="number" id="trans-cantidad" placeholder="Cant." value="1">
+                <input type="text" id="trans-desc" placeholder="Descripción">
+                <input type="number" id="trans-monto" placeholder="Monto $">
                 <button type="submit" class="btn-main">Registrar Movimiento</button>
             </form>
 
@@ -120,33 +126,33 @@
 
         <section id="pedidos">
             <h1>Gestión de Pedidos</h1>
-            <button onclick="generarListaCompras()" class="btn-main" style="background: #007bff; color:white; margin-bottom:15px;">📋 Generar Lista de Compras</button>
-            <div id="seccion-lista-compras" style="display:none; background: #fffbe6; padding: 15px; border-radius: 8px; border: 1px dashed #e6db74; margin-bottom: 20px;">
+            <button onclick="generarListaCompras()" class="btn-main" id="btn-generar-compras">📋 Generar Lista de Compras</button>
+            <div id="seccion-lista-compras">
                 <h3>🛒 Productos por Comprar</h3>
-                <ul id="lista-compras-items" style="list-style: none; padding: 0;"></ul>
-                <button onclick="this.parentElement.style.display='none'" style="margin-top:10px; cursor:pointer;">Cerrar Lista</button>
+                <ul id="lista-compras-items"></ul>
+                <button onclick="this.parentElement.style.display='none'" id="btn-cerrar-compras">Cerrar Lista</button>
             </div>
             <form id="form-encargo">
                 <input type="text" id="enc-cliente" placeholder="Nombre Cliente" required>
-                <div id="contenedor-filas-productos" style="width: 100%;">
+                <div id="contenedor-filas-productos">
                     <div class="fila-producto">
                         <input type="text" placeholder="Producto" class="p-nombre" required>
                         <input type="number" placeholder="Cant." class="p-cant" required>
                     </div>
                 </div>
-                <button type="button" onclick="agregarFila()" class="btn-main" style="background: gray; margin: 10px 0; color:white;">➕ Añadir Fila</button>
+                <button type="button" onclick="agregarFila()" class="btn-main" id="btn-add-fila">➕ Añadir Fila</button>
                 <input type="number" id="enc-total" placeholder="Total Pedido $" required>
                 <input type="number" id="enc-abono" placeholder="Abono Inicial $" value="0">
-                <button type="submit" class="btn-main" style="background: green; color:white;">Guardar Pedido</button>
+                <button type="submit" class="btn-main" id="btn-guardar-pedido">Guardar Pedido</button>
             </form>
             <div id="lista-pedidos-clientes" class="cards-container"></div>
         </section>
 
         <section id="deudas">
             <h1>Control de Deudores</h1>
-            <div class="card" style="margin-bottom:20px; border-left: 5px solid red;">
+            <div class="card" id="card-deuda-directa">
                 <h3>Registrar Deuda Directa</h3>
-                <form id="form-deuda-directa" style="box-shadow:none; padding:10px 0; background: transparent;">
+                <form id="form-deuda-directa">
                     <input type="text" id="deuda-cliente" placeholder="Nombre Cliente" required>
                     <input type="number" id="deuda-monto" placeholder="Monto que debe $" required>
                     <button type="submit" class="btn-main">Registrar Deuda</button>
