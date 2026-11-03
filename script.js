@@ -5,6 +5,7 @@ let productos = JSON.parse(localStorage.getItem('productos')) || [];
 let transacciones = JSON.parse(localStorage.getItem('transacciones')) || [];
 let encargos = JSON.parse(localStorage.getItem('encargos')) || [];
 let historialReportes = JSON.parse(localStorage.getItem('historialReportes')) || [];
+let gastosOperativos = JSON.parse(localStorage.getItem('gastosOperativos')) || [];
 
 /* --- NAVEGACIÓN --- */
 window.showSection = function(id) {
@@ -21,19 +22,40 @@ window.toggleMenu = function() {
     }
 }
 
-/* --- GESTIÓN DE PRODUCTOS --- */
+/* --- GESTIÓN DE PRODUCTOS (RECARGA INTELIGENTE DE STOCK) --- */
 const fProd = document.getElementById('form-producto');
 if(fProd) {
     fProd.addEventListener('submit', (e) => {
         e.preventDefault();
-        productos.push({
-            id: Date.now(),
-            nombre: document.getElementById('prod-nombre').value,
-            codigo: document.getElementById('prod-codigo').value || '', 
-            cantidad: parseInt(document.getElementById('prod-cantidad').value),
-            costo: parseFloat(document.getElementById('prod-costo').value),
-            precio: parseFloat(document.getElementById('prod-precio').value)
-        });
+        const codigoInput = document.getElementById('prod-codigo').value.trim();
+        const nombreInput = document.getElementById('prod-nombre').value.trim();
+        const cantidadInput = parseInt(document.getElementById('prod-cantidad').value);
+        const costoInput = parseFloat(document.getElementById('prod-costo').value);
+        const precioInput = parseFloat(document.getElementById('prod-precio').value);
+
+        // Buscar si ya existe por código (si fue ingresado) o por nombre exacto
+        let productoExistente = productos.find(p => 
+            (codigoInput !== '' && p.codigo === codigoInput) || 
+            p.nombre.toLowerCase() === nombreInput.toLowerCase()
+        );
+
+        if (productoExistente) {
+            // Si ya existe, SUMA al stock y actualiza los costos/precios más recientes
+            productoExistente.cantidad += cantidadInput;
+            productoExistente.costo = costoInput;
+            productoExistente.precio = precioInput;
+        } else {
+            // Si es nuevo, lo agrega normalmente
+            productos.push({
+                id: Date.now(),
+                nombre: nombreInput,
+                codigo: codigoInput, 
+                cantidad: cantidadInput,
+                costo: costoInput,
+                precio: precioInput
+            });
+        }
+
         actualizarTodo();
         fProd.reset();
     });
@@ -85,6 +107,7 @@ if(fEnc) {
             transacciones.push({
                 id: Date.now() + 1,
                 tipo: 'ingreso',
+                metodo: 'efectivo',
                 desc: `Abono inicial: ${cliente}`,
                 monto: abono,
                 fecha: new Date().toLocaleDateString()
@@ -144,11 +167,49 @@ window.abonar = function(id) {
     transacciones.push({
         id: Date.now(),
         tipo: 'ingreso', 
+        metodo: 'efectivo',
         desc: `Abono de: ${e.cliente}`, 
         monto: monto, 
         fecha: new Date().toLocaleDateString()
     });
     actualizarTodo();
+}
+
+/* --- GASTOS DIARIOS / LOGÍSTICA (DESCUENTO POR SURTIDO) --- */
+const fGastosOp = document.getElementById('form-gastos-diarios');
+if(fGastosOp) {
+    fGastosOp.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fecha = document.getElementById('gasto-fecha').value || new Date().toLocaleDateString();
+        const categoria = document.getElementById('gasto-categoria').value;
+        const detalle = document.getElementById('gasto-desc-op').value;
+        const monto = parseFloat(document.getElementById('gasto-monto-op').value);
+
+        const nuevoGasto = {
+            id: Date.now(),
+            fecha,
+            categoria,
+            detalle,
+            monto
+        };
+
+        gastosOperativos.push(nuevoGasto);
+
+        // Si la categoría es "Surtido", también lo registramos automáticamente como gasto general para que descuente de caja
+        if (categoria === 'Surtido') {
+            transacciones.push({
+                id: Date.now() + 1,
+                tipo: 'gasto',
+                metodo: 'efectivo',
+                desc: `Surtido inventario: ${detalle}`,
+                monto: monto,
+                fecha: fecha
+            });
+        }
+
+        actualizarTodo();
+        fGastosOp.reset();
+    });
 }
 
 /* --- VENTAS Y BÚSQUEDA --- */
@@ -181,6 +242,7 @@ if(fTrans) {
     fTrans.addEventListener('submit', (e) => {
         e.preventDefault();
         const tipo = document.getElementById('trans-tipo').value;
+        const metodoPago = document.getElementById('trans-metodo-pago').value; // 'efectivo' o 'transferencia'
         let monto = parseFloat(document.getElementById('trans-monto').value) || 0;
         let desc = document.getElementById('trans-desc').value;
 
@@ -191,7 +253,7 @@ if(fTrans) {
             if(p && p.cantidad >= cant) {
                 p.cantidad -= cant;
                 monto = p.precio * cant;
-                desc = `Venta: ${p.nombre} x${cant}`;
+                desc = `Venta (${metodoPago}): ${p.nombre} x${cant}`;
             } else {
                 return alert("Selecciona un producto válido con stock.");
             }
@@ -200,6 +262,7 @@ if(fTrans) {
         transacciones.push({
             id: Date.now(),
             tipo: (tipo === 'gasto' ? 'gasto' : 'ingreso'),
+            metodo: metodoPago,
             desc: desc,
             monto: monto,
             fecha: new Date().toLocaleDateString()
@@ -215,10 +278,12 @@ function actualizarTodo() {
     localStorage.setItem('productos', JSON.stringify(productos));
     localStorage.setItem('transacciones', JSON.stringify(transacciones));
     localStorage.setItem('encargos', JSON.stringify(encargos));
+    localStorage.setItem('gastosOperativos', JSON.stringify(gastosOperativos));
     renderInventario();
     renderPedidos();
     renderDeudas();
     renderFinanzas();
+    renderGastosLogistica();
     renderDashboard();
     renderHistorialReportes();
 }
@@ -259,7 +324,16 @@ function renderFinanzas() {
     const lista = document.getElementById('lista-transacciones');
     if(lista) {
         lista.innerHTML = transacciones.map(t => `
-            <tr><td>${t.fecha}</td><td>${t.desc}</td><td style="color:${t.tipo==='ingreso'?'green':'red'}">$${t.monto}</td></tr>
+            <tr><td>${t.fecha}</td><td>${t.desc}</td><td style="color:${t.tipo==='ingreso'?'green':'red'}">$${t.monto} (${t.metodo || 'efectivo'})</td></tr>
+        `).reverse().join('');
+    }
+}
+
+function renderGastosLogistica() {
+    const tabla = document.getElementById('tabla-gastos-logistica');
+    if(tabla) {
+        tabla.innerHTML = gastosOperativos.map(g => `
+            <tr><td>${g.fecha}</td><td>${g.categoria}</td><td>${g.detalle}</td><td style="color:red">$${g.monto.toLocaleString()}</td></tr>
         `).reverse().join('');
     }
 }
@@ -288,6 +362,7 @@ function renderPedidos() {
 window.toggleProductoSelector = function() {
     const tipo = document.getElementById('trans-tipo').value;
     const isVenta = (tipo === 'venta');
+    document.getElementById('contenedor-busqueda-prod').style.display = isVenter = isVenta ? 'block' : 'none'; // corregido
     document.getElementById('contenedor-busqueda-prod').style.display = isVenta ? 'block' : 'none';
     document.getElementById('trans-cantidad').style.display = isVenta ? 'block' : 'none';
     document.getElementById('trans-monto').style.display = isVenta ? 'none' : 'block';
@@ -379,17 +454,13 @@ window.startScanner = function() {
 function handleScanSuccess(codigoEscaneado) {
     stopScanner();
     
-    // Busca el producto por el campo 'codigo' o por el 'ID'
     const p = productos.find(x => x.codigo === codigoEscaneado || x.id.toString() === codigoEscaneado);
 
     if (p) {
         if (p.cantidad <= 0) return alert("Producto sin stock.");
         
-        // Llena los campos de venta automáticamente
         document.getElementById('input-buscar-prod').value = p.nombre;
         document.getElementById('select-producto-id').value = p.id;
-        
-        // Efecto visual: enfoca la cantidad para que el usuario solo tenga que darle a "Registrar"
         document.getElementById('trans-cantidad').focus();
     } else {
         alert("El código [" + codigoEscaneado + "] no está registrado en el inventario.");
